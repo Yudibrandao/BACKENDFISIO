@@ -1,10 +1,9 @@
 import express from 'express';
-
 import usersRoutes from './users.routes';
 import baseRoutes from './base.routes';
 import citasRoutes from './citas.routes';
 import authRoutes from './auth.routes';
-import tatuadoresRoutes from './doctores.routes'
+import doctoresRoutes from './doctores.routes'
 
 const router = express.Router();
 
@@ -19,7 +18,7 @@ router.use('/citas', citasRoutes);
 // auth routes
 router.use('/auth',authRoutes);
 
-// tatuadores routes
-router.use('/tatuadores',tatuadoresRoutes);
+// doctores routes
+router.use('/doctores',doctoresRoutes);
 
 export default router;

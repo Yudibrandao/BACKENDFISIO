@@ -8,14 +8,14 @@ const router = express.Router();
 /////////      CITAS ROUTES      //////////////////
 
 //create cita
-router.post('/create', authMiddleware, authorizeMiddleware(["Admin", "Tatuador", "cliente"]), citaController.create); 
+router.post('/create', authMiddleware, authorizeMiddleware(["Admin", "Doctor", "cliente"]), citaController.create); 
 
 
 //get citas by client
 router.get('/cliente/cita', authMiddleware, authorizeMiddleware(["cliente"]), citaController.getByLogedCliente); 
 
-//get citas by tatuador
-router.get('/tatuador/cita', authMiddleware, authorizeMiddleware(["tatuador"]), citaController.getByLogedTatuador); 
+//get citas by doctor
+router.get('/doctor/cita', authMiddleware, authorizeMiddleware(["doctor"]), citaController.getByLogedDoctor); 
 
 //lista Citas Admin
 router.get('/admin/listaCitas', authMiddleware, authorizeMiddleware(["Admin", "cliente"]), citaController.getByLogedAdmin); 
@@ -31,14 +31,14 @@ router.get('/', authMiddleware, authorizeMiddleware(["Admin"]), citaController.g
 //editar citas cliente
 router.put('/cliente/editarCita/:id', authMiddleware, authorizeMiddleware(["cliente"]), citaController.updateCitasCliente); 
 
-//editar citas tatuador
-router.put('/tatuador/editarCita/:id', authMiddleware, authorizeMiddleware(["tatuador"]), citaController.updateCitasTatuador); 
+//editar citas doctor
+router.put('/doctor/editarCita/:id', authMiddleware, authorizeMiddleware(["doctor"]), citaController.updateCitasDoctor); 
 
 //edit cita
 router.put('/editarCita/:id', authMiddleware, authorizeMiddleware(["Admin"]), citaController.updateCitasAdmin); 
 
 //delete cita
-router.delete('/:id', authMiddleware, authorizeMiddleware(["Cliente", "Tatuador"]), citaController.delete); 
+router.delete('/:id', authMiddleware, authorizeMiddleware(["Cliente", "Doctor"]), citaController.delete); 
 
 //get cita by id
 router.get('/:id', authMiddleware, authorizeMiddleware(["Admin"]), citaController.getById); 

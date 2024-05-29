@@ -6,19 +6,19 @@ import { citaController } from '../controllers/citaController';
 
 const router = express.Router();
 
-/////////      tatuadorS ROUTES      //////////////////
+/////////      doctor ROUTES      //////////////////
 
-// get all tatuadors
+// get all doctor
 router.get('/',doctorController.getAll);
 
 ///////////     PROTECTED ROUTES    /////////////////////
 
-//create tatuador
+//create doctor
 router.post('/create',authorizeMiddleware(["Admin"]),doctorController.create);
 
 
-//editar citas tatuador
-router.put('/doctor/editarCita/:id', authMiddleware, authorizeMiddleware(["doctor"]), citaController.updateCitasTatuador); 
+//editar citas doctor
+router.put('/doctor/editarCita/:id', authMiddleware, authorizeMiddleware(["doctor"]), citaController.updateCitasDoctor); 
 
 
 export default router;

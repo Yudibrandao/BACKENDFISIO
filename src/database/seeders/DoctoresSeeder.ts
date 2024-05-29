@@ -18,13 +18,23 @@ export class DoctoresSeeder extends Seeder {
             return;
         }
     
+
+        const doctores = new DoctoresFactory().createMany(DOCTORES);
+        const newDoctors: User[] = []
+        doctores.forEach((doctor: { user: User; }) =>{
+            const user = users.pop()
+            if(user) 
+                return doctor.user = user
+            }
+        )
+
         // Crear doctores y asignar usuarios
-        const doctoresFactory = new DoctoresFactory();
-        const doctores = doctoresFactory.createMany(DOCTORES);
-        doctores.forEach((doctor: Doctor) => {
-            // Asignar un usuario aleatorio al doctor
-            doctor.user = getRandomValueFromArray(users);
-        });
+        // const doctoresFactory = new DoctoresFactory();
+        // const doctores = doctoresFactory.createMany(DOCTORES);
+        // doctores.forEach((doctor: Doctor) => {
+        //     // Asignar un usuario aleatorio al doctor
+        //     doctor.user = getRandomValueFromArray(users);
+        // });
     
         // Guardar los doctores en la base de datos
         await Doctor.save(doctores);

@@ -12,7 +12,7 @@ export const authorizeMiddleware = (allowedRoles: string[]) => {
             return next();
         }
 
-        if (allowedRoles.includes(userRoles.TATUADOR.name)) {
+        if (allowedRoles.includes(userRoles.DOCTOR.name)) {
             return  next();
         } else if (allowedRoles.includes(userRoles.CLIENTE.name)) {
             return next();

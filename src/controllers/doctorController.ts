@@ -35,7 +35,7 @@ export const doctorController = {
             const {firstName, email, password,style,area} = req.body;
 
             if(!firstName || !email || !password ){
-                res.status(400).json({message:"No se pudo crear el tatuador"});
+                res.status(400).json({message:"No se pudo crear el doctor"});
                 return;
             }
 
@@ -56,14 +56,14 @@ export const doctorController = {
             await User.save(user);
 
             // const tatuador = Doctor.create({
-            //     especialidad:especialidad,
+            //     especialidad:"especialidad",
             //     area:area,
             //     user:user
             // });
 
-            // await Doctor.save(tatuador);
+            // await Doctor.save(doctor);
 
-            res.status(201).json({message:"Tatuador creado con exito"});
+            res.status(201).json({message:"Doctor creado con exito"});
 
 
         }catch(error){}

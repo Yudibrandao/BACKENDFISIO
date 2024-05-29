@@ -9,363 +9,332 @@ import { User } from "../models/User";
 
 export const citaController = {
 
-    //Get all Citas
+    // Get all Citas
     async getAll(req: Request, res: Response) {
-        // try {
+        try {
+            const [citas, totalCitas] = await Cita.findAndCount({
+                select: {
+                    id: true,
+                    day_date: true,
+                    description: true,
+                    price: true,
+                },
+            });
 
-        //     const [citas, totalCitas] = await Cita.findAndCount({
-        //         select: {
-        //             id: true,
-        //             day_date: true,
-        //             description: true,
-        //             price: true,
-        //         },
-        //     });
+            res.json(citas);
 
-        //     res.json(citas);
-
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ message: "Algo salio mal" });
-        // }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salio mal" });
+        }
     },
 
-    //Get Cita by ID
+    // Get Cita by ID
     async getById(req: Request, res: Response) {
-        // try {
-        //     const id = Number(req.params.id);
-        //     const cita = await Cita.findOne({
-        //         relations: {
-        //             doctor: { user: true },
-        //             cliente: { user: true }
-        //         },
-        //         select: {
-        //             id: true,
-        //             day_date: true,
-        //             description: true,
-        //             price: true,
-        //             doctor: {
-        //                 id: true,
-        //                 user: {
-        //                     firstName: true,
-        //                     email: true,
-        //                 }
-        //             },
-        //             cliente: {
-        //                 id: true,
-        //                 user: {
-        //                     firstName: true,
-        //                     email: true,
-        //                 }
-        //             }
-        //         },
-        //         where: {
-        //             id: id
-        //         }
-        //     });
+        try {
+            const id = Number(req.params.id);
+            const cita = await Cita.findOne({
+                relations: {
+                    doctor: { user: true },
+                    cliente: { user: true }
+                },
+                select: {
+                    id: true,
+                    day_date: true,
+                    description: true,
+                    price: true,
+                    doctor: {
+                        id: true,
+                        user: {
+                            firstName: true,
+                            email: true,
+                        }
+                    },
+                    cliente: {
+                        id: true,
+                        user: {
+                            firstName: true,
+                            email: true,
+                        }
+                    }
+                },
+                where: {
+                    id: id
+                }
+            });
 
-        //     if (!cita) {
-        //         return res.status(404).json({ message: "Cita no encontrada" });
-        //     }
+            if (!cita) {
+                return res.status(404).json({ message: "Cita no encontrada" });
+            }
 
-        //     res.json(cita);
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ message: "Algo salio mal" });
-        // }
+            res.json(cita);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salio mal" });
+        }
     },
 
     // Create Cita
     async create(req: Request, res: Response) {
-        // try {
-        //     //take the id from the request
-        //     const tokenUser = (req.tokenData);
-        //     const { day_date, description, price, Tatuador, cliente } = req.body;
+        try {
+            const tokenUser = req.tokenData;
+            const { day_date, description, price, Doctor, cliente } = req.body;
 
-        //     // if (tokenUser.userRole == "3") {
+            let cita;
+            if (tokenUser.userRole === "3") {
+                cita = Cita.create({
+                    day_date,
+                    description,
+                    price,
+                    doctorID: Doctor,
+                    clienteID: tokenUser.userId
+                });
+            } else if (tokenUser.userRole === "2") {
+                cita = Cita.create({
+                    day_date,
+                    description,
+                    price,
+                    doctorID: tokenUser.userId,
+                    clienteID: cliente
+                });
+            } else if (tokenUser.userRole === "1") {
+                cita = Cita.create({
+                    day_date,
+                    description,
+                    price,
+                    doctorID: Doctor,
+                    clienteID: cliente
+                });
+            } else {
+                return res.status(403).json({ message: "No tienes permisos para crear citas" });
+            }
 
-        //     //     const cita = await Cita.create({
-        //     //         day_date: day_date,
-        //     //         description: description,
-        //     //         price: price,
-        //     //         tatuadorID: Tatuador,
-        //     //         clienteID: tokenUser.userId
-        //     //     });
-        //     //     await cita.save();
-        //     //     res.json(cita);
-        //     // }
-        //     // if (tokenUser.userRole == "2") {
 
-        //     //     const cita = await Cita.create({
-        //     //         day_date: day_date,
-        //     //         description: description,
-        //     //         price: price,
-        //     //         tatuadorID: tokenUser.userId,
-        //     //         clienteID: tokenUser.userId
-        //     //     });
-        //     //     await cita.save();
-        //     //     res.json(cita);
-        //     // }
-        //     // if (tokenUser.userRole == "1") {
-               
-        //         const cita = await Cita.create({
-        //             day_date: day_date,
-        //             doctorrID: Doctor,
-        //             clienteID: tokenUser.userId,
-        //             description: description,
-        //             price: price
-                
-        //         });
-        //         console.log (cita)
-        //         await cita.save();
-        //         res.json(cita);
-        //     // }
-
-        // } catch (error) {
-        //     res.status(500).json({ message: error });
-        // }
+            await cita.save();
+            res.json(cita);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salió mal" });
+        }
     },
 
-    // Update Cita
-    async updateCitasAdmin(req: Request, res: Response) {
-        // try {
-        //     const tokenUser = (req.tokenData);
-
-        //     if (tokenUser.userRole != "1") {
-        //         return res.status(404).json({ message: "Sin permisos" });
-        //     }
-        //     const id = Number(req.params.id);
-        //     const { day_date, description, price, Tatuador, Cliente, isActive } = req.body;
-        //     let cita = await Cita.findOne({ where: { id: id } });
-        //     if (!cita) {
-        //         return res.status(404).json({ message: "Cita no encontrada" });
-        //     }
-
-        //     cita.day_date = day_date;
-        //     cita.description = description;
-        //     cita.price = price;
-        //     cita.tatuadorID = Tatuador;
-        //     cita.clienteID = Cliente;
-        //     // cita.isActive = isActive
-
-        //     await cita.save();
-
-        //     res.json(cita);
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ message: "Algo salio mal" });
-        // }
-    },
-
-    //editar citas cliente
-    async updateCitasCliente(req: Request, res: Response) {
-        // try {
-        //     const tokenUser = (req.tokenData);
-
-        //     if (tokenUser.userRole != "3") {
-        //         return res.status(404).json({ message: "Sin permisos" });
-        //     }
-        //     const id = Number(req.params.id);
-        //     const { day_date, description, price, Tatuador, Cliente, isActive } = req.body;
-        //     let cita = await Cita.findOne({ where: { id: id, clienteID: tokenUser.userId } });
-        //     if (!cita) {
-        //         return res.status(404).json({ message: "Cita no encontrada" });
-        //     }
-
-        //     cita.day_date = day_date;
-        //     cita.description = description;
-        //     cita.price = price;
-        //     cita.tatuadorID = Tatuador;
-        //     cita.clienteID = Cliente;
-        //     // cita.isActive = isActive
-
-        //     await cita.save();
-
-        //     res.json(cita);
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ message: "Algo salio mal" });
-        // }
-    },
-
-
-    //editar citas tatuador
-    async updateCitasTatuador(req: Request, res: Response) {
-        // try {
-        //     const tokenUser = (req.tokenData);
-
-        //     if (tokenUser.userRole != "2") {
-        //         return res.status(404).json({ message: "Sin permisos" });
-        //     }
-        //     const id = Number(req.params.id);
-        //     const { day_date, description, price, Tatuador, Cliente, isActive } = req.body;
-        //     let cita = await Cita.findOne({ where: { id: id, tatuadorID: tokenUser.userId } });
-        //     if (!cita) {
-        //         return res.status(404).json({ message: "Cita no econtrada" });
-        //     }
-
-        //     cita.day_date = day_date;
-        //     cita.description = description;
-        //     cita.price = price;
-        //     cita.tatuadorID = Tatuador;
-        //     cita.clienteID = Cliente;
-        //     // cita.isActive = isActive
-
-        //     await cita.save();
-
-        //     res.json(cita);
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ message: "Algo salio mal" });
-        // }
-    },
+    // Other functions (update, delete, etc.) ...
     
+    async updateCitasAdmin(req: Request, res: Response) {
+        try {
+            const tokenUser = req.tokenData;
 
+            if (tokenUser.userRole !== "1") {
+                return res.status(404).json({ message: "Sin permisos" });
+            }
+            const id = Number(req.params.id);
+            const { day_date, description, price, Doctor, Cliente, isActive } = req.body;
+            let cita = await Cita.findOne({ where: { id: id } });
+            if (!cita) {
+                return res.status(404).json({ message: "Cita no encontrada" });
+            }
 
-    // Delete Cita
+            cita.day_date = day_date;
+            cita.description = description;
+            cita.price = price;
+            cita.doctorID = Doctor;
+            cita.clienteID = Cliente;
+            // cita.isActive = isActive
+
+            await cita.save();
+
+            res.json(cita);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salio mal" });
+        }
+    },
+
+    async updateCitasCliente(req: Request, res: Response) {
+        try {
+            const tokenUser = req.tokenData;
+
+            if (tokenUser.userRole !== "3") {
+                return res.status(404).json({ message: "Sin permisos" });
+            }
+            const id = Number(req.params.id);
+            const { day_date, description, price, Doctor, Cliente, isActive } = req.body;
+            let cita = await Cita.findOne({ where: { id: id, clienteID: tokenUser.userId } });
+            if (!cita) {
+                return res.status(404).json({ message: "Cita no encontrada" });
+            }
+
+            cita.day_date = day_date;
+            cita.description = description;
+            cita.price = price;
+            cita.doctorID = Doctor;
+            cita.clienteID = Cliente;
+            // cita.isActive = isActive
+
+            await cita.save();
+
+            res.json(cita);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salio mal" });
+        }
+    },
+
+    async updateCitasDoctor(req: Request, res: Response) {
+        try {
+            const tokenUser = req.tokenData;
+
+            if (tokenUser.userRole !== "2") {
+                return res.status(404).json({ message: "Sin permisos" });
+            }
+            const id = Number(req.params.id);
+            const { day_date, description, price, Doctor, Cliente, isActive } = req.body;
+            let cita = await Cita.findOne({ where: { id: id, doctorID: tokenUser.userId } });
+            if (!cita) {
+                return res.status(404).json({ message: "Cita no encontrada" });
+            }
+
+            cita.day_date = day_date;
+            cita.description = description;
+            cita.price = price;
+            cita.doctorID = Doctor;
+            cita.clienteID = Cliente;
+            // cita.isActive = isActive
+
+            await cita.save();
+
+            res.json(cita);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salio mal" });
+        }
+    },
+
     async delete(req: Request, res: Response) {
-        // try {
-        //     const id = Number(req.params.id);
-        //     const cita = await Cita.findOne({ where: { id: id } });
+        try {
+            const id = Number(req.params.id);
+            const cita = await Cita.findOne({ where: { id: id } });
 
-        //     if (!cita) {
-        //         return res.status(404).json({ message: "Cita no encontrada" });
-        //     }
+            if (!cita) {
+                return res.status(404).json({ message: "Cita no encontrada" });
+            }
 
-        //     await cita.remove();
-        //     res.json({ message: "Cita borrada" });
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ message: "Algo salio mal" });
-        // }
+            await cita.remove();
+            res.json({ message: "Cita borrada" });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salio mal" });
+        }
     },
 
-    // Get all Citas by Cliente
     async getByLogedCliente(req: Request, res: Response) {
-        // try {
+        try {
+            const citas = await Cita.find({
+                relations: {
+                    doctor: { user: true },
+                    cliente: { user: true }
+                },
+                select: {
+                    id: true,
+                    day_date: true,
+                    description: true,
+                    price: true,
+                    doctor: {
+                        id: true,
+                        user: {
+                            firstName: true,
+                            email: true,
+                        }
+                    },
+                    cliente: {
+                        id: true,
+                        user: {
+                            firstName: true,
+                            email: true,
+                        }
+                    }
+                },
+                where: { clienteID: req.tokenData!.userId }
+            });
 
-        //     const citas = await Cita.find({
-        //         relations: {
-        //             tatuador: { user: true },
-        //             cliente: { user: true }
-        //         },
-        //         select: {
-        //             id: true,
-        //             day_date: true,
-        //             description: true,
-        //             price: true,
-        //             tatuador: {
-        //                 id: true,
-        //                 user: {
-        //                     firstName: true,
-        //                     email: true,
-        //                 }
-        //             },
-        //             cliente: {
-        //                 id: true,
-        //                 user: {
-        //                     firstName: true,
-        //                     email: true,
-
-        //                 }
-        //             }
-        //         },
-        //         where: { clienteID: req.tokenData!.userId }
-        //     });
-
-        //     res.json(citas);
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ message: "Algo salio mal" });
-        // }
+            res.json(citas);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salio mal" });
+        }
     },
 
+    async getByLogedDoctor(req: Request, res: Response) {
+        try {
+            const citas = await Cita.find({
+                relations: {
+                    doctor: { user: true },
+                    cliente: { user: true }
+                },
+                select: {
+                    id: true,
+                    day_date: true,
+                    description: true,
+                    price: true,
+                    doctor: {
+                        id: true,
+                        user: {
+                            firstName: true,
+                            email: true,
+                        }
+                    },
+                    cliente: {
+                        id: true,
+                        user: {
+                            firstName: true,
+                            email: true,
+                        }
+                    }
+                },
+                where: { doctorID: req.tokenData!.userId }
+            });
 
-    // Get all Citas by Loged Tatuador
-    async getByLogedTatuador(req: Request, res: Response) {
-        // try {
-
-
-        //     const citas = await Cita.find({
-        //         relations: {
-        //             tatuador: { user: true },
-        //             cliente: { user: true }
-        //         },
-        //         select: {
-        //             id: true,
-        //             day_date: true,
-        //             description: true,
-        //             price: true,
-        //             tatuador: {
-        //                 id: true,
-        //                 user: {
-        //                     firstName: true,
-        //                     email: true,
-
-        //                 }
-        //             },
-        //             cliente: {
-        //                 id: true,
-        //                 user: {
-        //                     firstName: true,
-        //                     email: true,
-
-        //                 }
-        //             }
-        //         },
-        //         where: { tatuadorID: req.tokenData!.userId }
-        //     });
-
-        //     res.json(citas);
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ message: "Algo salio mal" });
-        // }
+            res.json(citas);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salio mal" });
+        }
     },
 
-
-    //Lista citas Admin
     async getByLogedAdmin(req: Request, res: Response) {
-        // try {
+        try {
+            const citas = await Cita.find({
+                relations: {
+                    doctor: { user: true },
+                    cliente: { user: true }
+                },
+                select: {
+                    id: true,
+                    day_date: true,
+                    description: true,
+                    price: true,
+                    doctor: {
+                        id: true,
+                        user: {
+                            firstName: true,
+                            email: true,
+                        }
+                    },
+                    cliente: {
+                        id: true,
+                        user: {
+                            firstName: true,
+                            email: true,
+                        }
+                    }
+                }
+            });
 
-
-        //     const citas = await Cita.find({
-        //         relations: {
-        //             tatuador: { user: true },
-        //             cliente: { user: true }
-        //         },
-        //         select: {
-        //             id: true,
-        //             day_date: true,
-        //             description: true,
-        //             price: true,
-        //             tatuador: {
-        //                 id: true,
-        //                 user: {
-        //                     firstName: true,
-        //                     email: true,
-
-        //                 }
-        //             },
-        //             cliente: {
-        //                 id: true,
-        //                 user: {
-        //                     firstName: true,
-        //                     email: true,
-
-        //                 }
-        //             }
-        //         },
-
-        //     });
-
-        //     res.json(citas);
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ message: "Algo salio mal" });
-        // }
+            res.json(citas);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Algo salio mal" });
+        }
     },
 
 }
-
-

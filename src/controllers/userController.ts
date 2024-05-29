@@ -329,7 +329,7 @@ export const userController = {
             }
 
             const userId = Number(req.params.id);
-            const { firstName, lastName, email, password, isActive, role, day_date, description, price, Tatuador, Cliente } = req.body;
+            const { firstName, lastName, email, password, isActive, role, day_date, description, price, Doctor, Cliente } = req.body;
 
             // Actualizar los campos del usuario
             let user = await User.findOne({ where: { id: userId } });

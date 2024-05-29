@@ -18,14 +18,23 @@ export class ClienteSeeder extends Seeder{
         }
     
         // Crear clientes y asignar usuarios
-        const clienteFactory = new ClienteFactory();
-        const clientes = clienteFactory.createMany(CLIENTE);
-        clientes.forEach((cliente: Cliente) => {
-            // Asignar un usuario aleatorio al cliente
-            cliente.user = getRandomValueFromArray(users);
-        });
+        // const ClienteFactory = new ClienteFactory();
+        const cliente = new ClienteFactory().createMany(CLIENTE);
+        const newClientes: User[] = []
+        cliente.forEach((cliente: { user: User; }) =>{
+            const user = users.pop()
+            if(user) 
+                return cliente.user = user
+            }
+        )
+
+        // const clientes = clienteFactory.createMany(CLIENTE);
+        // clientes.forEach((cliente: Cliente) => {
+        //     // Asignar un usuario aleatorio al cliente
+        //     cliente.user = getRandomValueFromArray(users);
+        // });
     
         // Guardar los clientes en la base de datos
-        await Cliente.save(clientes);
+        await Cliente.save(cliente);
     }
 }
