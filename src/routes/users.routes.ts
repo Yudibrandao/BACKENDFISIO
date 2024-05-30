@@ -46,7 +46,7 @@ router.put('/edit/role/:id',authMiddleware,authorizeMiddleware(["Admin"]), userC
 router.put('/admin/editarUsuario/:id', authMiddleware, authorizeMiddleware(["admin"]), userController.updateUserAdmin); 
 
 // //delete user
-// router.delete('/delete/:id',authMiddleware, authorizeMiddleware(["admin", "cliente"]),userController.delete);
+router.delete('/delete/:id',authMiddleware, authorizeMiddleware(["admin", "cliente"]),userController.deleteUserId);
 
 
 export default router;

@@ -59,7 +59,7 @@ export const userController = {
             const { email, password } = req.body;
 
             const userLogin = await User.findOne({ where: { email: email }, select: ["id", "firstName", "role_id", "password", "isActive"] });
-            
+
             if (!userLogin) {
                 // Lanza un error con un código de estado HTTP personalizado
                 return res.status(500).json({ message: "Usuario no encontrado" });
@@ -160,7 +160,7 @@ export const userController = {
                 relations: {
                     role: true,
                 },
-                where: { id: userId },
+                where: { id: userId }, select: ["id", "firstName", "lastName", "role_id", "password", "isActive"]
             });
 
 
@@ -168,8 +168,9 @@ export const userController = {
                 res.status(404).json({ message: "Usuario no encontado" });
                 return;
             }
+            console.log(user)
 
-            res.json(user);
+            res.status(200).json(user);
         } catch (error) {
 
             res.status(500).json({
@@ -229,6 +230,29 @@ export const userController = {
         }
     },
 
+    async deleteUserId(req: Request, res: Response) {
+
+        try {
+            //take the id from the request
+            const userId = Number(req.params.id)
+            //find the user by id
+            const user = await User.findOne({ where: { id: userId } });
+           
+            //if the user is not found, return a 404 status
+            if (!user) {
+                res.status(404).json({ message: "Usuario no encontrado" });
+                return;
+            } 
+            //remove the user
+            await user.remove();
+            //return a 200 status
+            res.status(200).json({ message: "Usuario eliminado exitosamente" });
+        } catch (error) {
+            console.error(error);
+            //if something goes wrong, return a 500 status
+            res.status(500).json({ message: "Algo salio mal" });
+        }
+    },
 
     async getLogedUser(req: Request, res: Response, next: NextFunction) {
         try {
