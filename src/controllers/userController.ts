@@ -59,7 +59,7 @@ export const userController = {
             const { email, password } = req.body;
 
             const userLogin = await User.findOne({ where: { email: email }, select: ["id", "firstName", "role_id", "password", "isActive"] });
-
+            
             if (!userLogin) {
                 // Lanza un error con un código de estado HTTP personalizado
                 return res.status(500).json({ message: "Usuario no encontrado" });

@@ -41,12 +41,12 @@ export class CreateCitasTable1710497679656 implements MigrationInterface {
                     {
                         columnNames:["doctor_id"],
                         referencedTableName: "doctores",
-                        referencedColumnNames:["user_id"]
+                        referencedColumnNames:["id"]
                     },
                     {
                         columnNames:["cliente_id"],
                         referencedTableName: "clientes",
-                        referencedColumnNames:["user_id"]
+                        referencedColumnNames:["id"]
                     }
                 ]
             })
