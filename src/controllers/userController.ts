@@ -243,8 +243,9 @@ export const userController = {
                 res.status(404).json({ message: "Usuario no encontrado" });
                 return;
             } 
-            //remove the user
-            await user.remove();
+          
+            user.isActive = false;
+            await user.save();
             //return a 200 status
             res.status(200).json({ message: "Usuario eliminado exitosamente" });
         } catch (error) {

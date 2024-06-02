@@ -13,7 +13,6 @@ router.get('/profile/',authMiddleware, userController.getLogedUser);
 
 router.post('/login/', userController.login);
 
-
 //Update loged user profile
 router.put('/profile/update',authMiddleware, userController.updateLogedUser);
 
@@ -28,8 +27,6 @@ router.delete('/delete',authMiddleware, userController.deleteByToken);
 
 
 ///////////     PROTECTED ROUTES    /////////////////////
-
-
 
 //Create user
 router.post('/create', userController.create);

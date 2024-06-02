@@ -10,7 +10,6 @@ const router = express.Router();
 //create cita
 router.post('/create', authMiddleware, authorizeMiddleware(["Admin", "Doctor", "cliente"]), citaController.create); 
 
-
 //get citas by client
 router.get('/cliente/cita', authMiddleware, authorizeMiddleware(["cliente"]), citaController.getByLogedCliente); 
 
@@ -26,8 +25,6 @@ router.get('/admin/listaCitas', authMiddleware, authorizeMiddleware(["Admin", "c
 //get all citas
 router.get('/', authMiddleware, authorizeMiddleware(["Admin"]), citaController.getAll); 
 
-
-
 //editar citas cliente
 router.put('/cliente/editarCita/:id', authMiddleware, authorizeMiddleware(["cliente"]), citaController.updateCitasCliente); 
 
@@ -37,8 +34,8 @@ router.put('/doctor/editarCita/:id', authMiddleware, authorizeMiddleware(["docto
 //edit cita
 router.put('/editarCita/:id', authMiddleware, authorizeMiddleware(["Admin"]), citaController.updateCitasAdmin); 
 
-//delete cita
-router.delete('/:id', authMiddleware, authorizeMiddleware(["Cliente", "Doctor"]), citaController.delete); 
+// //delete cita
+// router.delete('/:id', authMiddleware, authorizeMiddleware(["Cliente", "Doctor"]), citaController.delete); 
 
 //get cita by id
 router.get('/:id', authMiddleware, authorizeMiddleware(["Admin"]), citaController.getById); 
